@@ -104,7 +104,11 @@ export default function EventDetailPage() {
     }
   }
 
-  const joinLink = event ? `${APP_URL}/join/${event.joinSlug}` : "";
+  // Build the join link from the domain the admin is actually on (works in
+  // dev and prod without depending on an env var).
+  const base =
+    typeof window !== "undefined" ? window.location.origin : APP_URL;
+  const joinLink = event ? `${base}/join/${event.joinSlug}` : "";
   const finished =
     roundLive?.event.phase === "finished" ||
     roundLive?.event.status === "completed";

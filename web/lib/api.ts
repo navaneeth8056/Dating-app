@@ -1,8 +1,13 @@
-export const API_URL =
-  process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:4000";
+// Strip any trailing slash so `${API_URL}/health` never becomes `//health`.
+const stripSlash = (u: string) => u.replace(/\/+$/, "");
 
-export const APP_URL =
-  process.env.NEXT_PUBLIC_APP_URL ?? "http://localhost:3000";
+export const API_URL = stripSlash(
+  process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:4000"
+);
+
+export const APP_URL = stripSlash(
+  process.env.NEXT_PUBLIC_APP_URL ?? "http://localhost:3000"
+);
 
 export async function api<T = unknown>(
   path: string,

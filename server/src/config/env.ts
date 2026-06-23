@@ -3,9 +3,10 @@ import dotenv from "dotenv";
 dotenv.config();
 
 // CLIENT_ORIGIN may be a comma-separated list (prod URL, preview URLs, localhost).
+// Trailing slashes are stripped so they match the browser's Origin header exactly.
 const origins = (process.env.CLIENT_ORIGIN ?? "http://localhost:3000")
   .split(",")
-  .map((s) => s.trim())
+  .map((s) => s.trim().replace(/\/+$/, ""))
   .filter(Boolean);
 
 export const env = {
