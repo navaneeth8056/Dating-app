@@ -1,0 +1,11 @@
+# Root ignore — each app also has its own
+node_modules/
+.env
+.env.local
+*.log
+.DS_Store
+
+# build outputs
+web/.next/
+web/out/
+server/dist/
