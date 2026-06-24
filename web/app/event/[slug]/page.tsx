@@ -100,7 +100,7 @@ export default function EventPage() {
   const wantVideo =
     round?.event.phase === "in_date" &&
     !!myPairForVideo &&
-    myPairForVideo.status !== "left" &&
+    !(myPairForVideo.leftBy ?? []).includes(myPid) &&
     !!myPairForVideo.hasRoom;
   const videoKey = wantVideo ? `r${round?.event.currentRound}` : "";
   useEffect(() => {
@@ -212,7 +212,14 @@ export default function EventPage() {
       ? myNext.bName
       : myNext.aName
     : null;
-  const iLeft = myPair?.status === "left";
+  const partnerId = myPair
+    ? myPair.aId === myPid
+      ? myPair.bId
+      : myPair.aId
+    : null;
+  const leftBy = myPair?.leftBy ?? [];
+  const iLeft = leftBy.includes(myPid);
+  const partnerLeft = !!partnerId && leftBy.includes(partnerId);
   const amBye = round && !myPair;
 
   return (
@@ -318,6 +325,12 @@ export default function EventPage() {
                   You're talking with
                 </p>
                 <p className="mt-1 text-3xl font-semibold">{partnerName}</p>
+                {partnerLeft && (
+                  <p className="mx-auto mt-2 max-w-md rounded-lg bg-amber-50 px-3 py-2 text-sm text-amber-800">
+                    Your match left the date — they may have a network issue.
+                    You'll be paired with someone new next round.
+                  </p>
+                )}
                 {dateToken ? (
                   <div className="mt-3">
                     <VideoCall

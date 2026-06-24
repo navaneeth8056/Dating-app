@@ -10,6 +10,7 @@ const PairingSchema = new Schema({
   aId: { type: String, required: true }, // male participant id
   bId: { type: String, required: true }, // female participant id
   status: { type: String, enum: ["active", "left"], default: "active" },
+  leftBy: { type: [String], default: [] }, // participant ids who left this date
   roomName: { type: String }, // Daily.co room (created at round start)
   roomUrl: { type: String },
   createdAt: { type: Date, default: Date.now },

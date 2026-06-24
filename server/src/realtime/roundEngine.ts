@@ -67,6 +67,7 @@ export async function broadcastRoundState(io: SocketServer, eventId: string) {
       bId: p.bId,
       bName: nameById.get(p.bId) ?? "?",
       status: p.status,
+      leftBy: p.leftBy ?? [],
       hasRoom: Boolean(p.roomName),
     })),
     nextPairs: nextPairs.map((p) => ({
@@ -252,7 +253,7 @@ export async function leaveDate(
       round: event.currentRound,
       $or: [{ aId: participantId }, { bId: participantId }],
     },
-    { status: "left" }
+    { $addToSet: { leftBy: participantId }, $set: { status: "left" } }
   );
   await broadcastRoundState(io, eventId);
 }
@@ -270,10 +271,11 @@ export async function issueDateToken(
   const pairing = await Pairing.findOne({
     eventId,
     round: event.currentRound,
-    status: "active",
     $or: [{ aId: participantId }, { bId: participantId }],
   }).lean();
   if (!pairing || !pairing.roomName || !pairing.roomUrl) return null;
+  // The person who left this date doesn't get a video token; their partner stays.
+  if ((pairing.leftBy ?? []).includes(participantId)) return null;
 
   const participant = await Participant.findById(participantId).lean();
   const exp =
@@ -307,7 +309,7 @@ export async function rejoinDate(
       round: event.currentRound,
       $or: [{ aId: participantId }, { bId: participantId }],
     },
-    { status: "active" }
+    { $pull: { leftBy: participantId } }
   );
   await broadcastRoundState(io, eventId);
 }

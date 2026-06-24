@@ -52,6 +52,7 @@ export interface RoundPair {
   bId: string;
   bName: string;
   status?: string;
+  leftBy?: string[];
   hasRoom?: boolean;
 }
 
